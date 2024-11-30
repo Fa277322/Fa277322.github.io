@@ -1,3 +1,3 @@
-var posts=["2024/11/30/Linux基础笔记/","2024/11/30/hello-world/"];function toRandomPost(){
+var posts=["undefined/Linux基础笔记/","undefined/这是另一篇新的博文/","undefined/hello-world/"];function toRandomPost(){
     pjax.loadUrl('/'+posts[Math.floor(Math.random() * posts.length)]);
   };
