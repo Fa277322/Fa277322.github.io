@@ -29,6 +29,31 @@
     
     
     <entry>
+      <title>机场推荐</title>
+      <link href="/undefined/%E6%9C%BA%E5%9C%BA%E6%8E%A8%E8%8D%90/"/>
+      <url>/undefined/%E6%9C%BA%E5%9C%BA%E6%8E%A8%E8%8D%90/</url>
+      
+        <content type="html"><![CDATA[<p>HI</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 机场推荐 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 机场推荐 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>科学上网</title>
       <link href="/undefined/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"/>
       <url>/undefined/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/</url>
@@ -71,6 +96,31 @@
         <tags>
             
             <tag> 中小企业网络构建 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>笔记</title>
+      <link href="/undefined/%E7%AC%94%E8%AE%B0/"/>
+      <url>/undefined/%E7%AC%94%E8%AE%B0/</url>
+      
+        <content type="html"><![CDATA[<p>HI</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 笔记 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 笔记 </tag>
             
         </tags>
       
