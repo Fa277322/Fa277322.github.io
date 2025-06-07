@@ -104,23 +104,23 @@
     
     
     <entry>
-      <title>配置DNS服务器进行域名解析+配置邮件服务器</title>
-      <link href="/undefined/%E9%85%8D%E7%BD%AEDNS%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%9B%E8%A1%8C%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90+%E9%85%8D%E7%BD%AE%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
-      <url>/undefined/%E9%85%8D%E7%BD%AEDNS%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%9B%E8%A1%8C%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90+%E9%85%8D%E7%BD%AE%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+      <title>机场推荐</title>
+      <link href="/undefined/%E6%9C%BA%E5%9C%BA%E6%8E%A8%E8%8D%90/"/>
+      <url>/undefined/%E6%9C%BA%E5%9C%BA%E6%8E%A8%E8%8D%90/</url>
       
-        <content type="html"><![CDATA[<h2 id="配置DNS服务器实现域名解析访问Web服务器"><a href="#配置DNS服务器实现域名解析访问Web服务器" class="headerlink" title="配置DNS服务器实现域名解析访问Web服务器"></a>配置DNS服务器实现域名解析访问Web服务器</h2><h3 id="需要一台Server2022作为搭建DNS服务器的载体"><a href="#需要一台Server2022作为搭建DNS服务器的载体" class="headerlink" title="需要一台Server2022作为搭建DNS服务器的载体"></a>需要一台Server2022作为搭建DNS服务器的载体</h3><h3 id="需要一台Web服务器"><a href="#需要一台Web服务器" class="headerlink" title="需要一台Web服务器"></a>需要一台Web服务器</h3><h4 id="一、搭建DNS服务器"><a href="#一、搭建DNS服务器" class="headerlink" title="一、搭建DNS服务器"></a>一、搭建DNS服务器</h4><h5 id="1、服务器管理器—添加角色和功能—勾选DNS服务器—一直点击下一步直至安装完成"><a href="#1、服务器管理器—添加角色和功能—勾选DNS服务器—一直点击下一步直至安装完成" class="headerlink" title="1、服务器管理器—添加角色和功能—勾选DNS服务器—一直点击下一步直至安装完成"></a>1、服务器管理器—添加角色和功能—勾选DNS服务器—一直点击下一步直至安装完成</h5><img src=https://img03.656886.xyz/1-17308819689011.png><img src=https://img03.656886.xyz/2-17308819765763.png><img src=https://img03.656886.xyz/3-17308820077787.png><h4 id="2、配置DNS"><a href="#2、配置DNS" class="headerlink" title="2、配置DNS"></a>2、配置DNS</h4><h5 id="工具—DNS—双击此服务器名称—右键正向查找区域—新建区域向导—输入区域名称一直点击下一步直至完成"><a href="#工具—DNS—双击此服务器名称—右键正向查找区域—新建区域向导—输入区域名称一直点击下一步直至完成" class="headerlink" title="工具—DNS—双击此服务器名称—右键正向查找区域—新建区域向导—输入区域名称一直点击下一步直至完成"></a>工具—DNS—双击此服务器名称—右键正向查找区域—新建区域向导—输入区域名称一直点击下一步直至完成</h5><img src=https://img03.656886.xyz/4-17308820124189.png><img src=https://img03.656886.xyz/5-173088201681111.png><h5 id="右键新建的区域名称—点击新建主机—输入名称和IP地址-此处的IP地址填写Web服务器的IP地址"><a href="#右键新建的区域名称—点击新建主机—输入名称和IP地址-此处的IP地址填写Web服务器的IP地址" class="headerlink" title="右键新建的区域名称—点击新建主机—输入名称和IP地址(此处的IP地址填写Web服务器的IP地址)"></a>右键新建的区域名称—点击新建主机—输入名称和IP地址(此处的IP地址填写Web服务器的IP地址)</h5><img src=https://img03.656886.xyz/6-173088202109013.png><img src=https://img03.656886.xyz/7-173088202411415.png><h3 id="客户端PC使用DNS的服务"><a href="#客户端PC使用DNS的服务" class="headerlink" title="客户端PC使用DNS的服务"></a>客户端PC使用DNS的服务</h3><h4 id="1、修改DNS首选服务器的IP地址"><a href="#1、修改DNS首选服务器的IP地址" class="headerlink" title="1、修改DNS首选服务器的IP地址"></a>1、修改DNS首选服务器的IP地址</h4><h5 id="右键右下角网络图标—打开“网络和Internet设置”—点击更改适配器选项—右键”Ethernet0网卡”—属性—双击协议版本4—点击使用下面的DNS服务器地址-此处填写DNS服务器的IP地址"><a href="#右键右下角网络图标—打开“网络和Internet设置”—点击更改适配器选项—右键”Ethernet0网卡”—属性—双击协议版本4—点击使用下面的DNS服务器地址-此处填写DNS服务器的IP地址" class="headerlink" title="右键右下角网络图标—打开“网络和Internet设置”—点击更改适配器选项—右键”Ethernet0网卡”—属性—双击协议版本4—点击使用下面的DNS服务器地址(此处填写DNS服务器的IP地址)"></a>右键右下角网络图标—打开“网络和Internet设置”—点击更改适配器选项—右键”Ethernet0网卡”—属性—双击协议版本4—点击使用下面的DNS服务器地址(此处填写DNS服务器的IP地址)</h5><img src=https://img03.656886.xyz/8-173088202770117.png><img src=https://img03.656886.xyz/9-173088203231019.png><h4 id="2、通过浏览器输入域名访问Web服务器"><a href="#2、通过浏览器输入域名访问Web服务器" class="headerlink" title="2、通过浏览器输入域名访问Web服务器"></a>2、通过浏览器输入域名访问Web服务器</h4><img src=https://img03.656886.xyz/10-173088203657321.png><h1 align=center>至此，搭建DNS服务实现域名解析访问Web服务器的所有步骤如上！</h1><hr><h1 id="配置邮件服务器-搭配DNS服务器进行域名解析"><a href="#配置邮件服务器-搭配DNS服务器进行域名解析" class="headerlink" title="配置邮件服务器(搭配DNS服务器进行域名解析)"></a>配置邮件服务器(搭配DNS服务器进行域名解析)</h1><h6 id="PS：准备两台Win-Server2022-一台搭建DNS一台搭建邮件服务器"><a href="#PS：准备两台Win-Server2022-一台搭建DNS一台搭建邮件服务器" class="headerlink" title="PS：准备两台Win Server2022 一台搭建DNS一台搭建邮件服务器"></a>PS：准备两台Win Server2022 一台搭建DNS一台搭建邮件服务器</h6><h3 id="一、安装邮件服务器应用"><a href="#一、安装邮件服务器应用" class="headerlink" title="一、安装邮件服务器应用"></a>一、安装邮件服务器应用</h3><p>下载好winmail x86_32安装包，双击运行进行安装</p><img src=https://img03.656886.xyz/11-173088215086337.png><p>一路默认，下一步直至安装完成（配置的密码记住，等待重启完成）</p><img src=https://img03.656886.xyz/12-173088215407139.png><img src=https://img03.656886.xyz/13-173088215798341.png><h3 id="二、进入邮件服务器管理工具进行配置"><a href="#二、进入邮件服务器管理工具进行配置" class="headerlink" title="二、进入邮件服务器管理工具进行配置"></a>二、进入邮件服务器管理工具进行配置</h3><p>双击打开应用登录进行配置</p><img src=https://img03.656886.xyz/14-173088216166243.png><p>点击用户和组—用户管理—修改密码后浏览器输入邮件服务器的IP地址:6080即可访问登录</p><img src=https://img03.656886.xyz/16-173088217492946.png><img src=https://img03.656886.xyz/17-173088217828748.png><h3 id="三、修改邮件服务器的HTTP端口"><a href="#三、修改邮件服务器的HTTP端口" class="headerlink" title="三、修改邮件服务器的HTTP端口"></a>三、修改邮件服务器的HTTP端口</h3><p>系统设置—系统服务—HTTP—修改为80</p><img src=https://img05.656886.xyz/one.png><h3 id="四、新建用户"><a href="#四、新建用户" class="headerlink" title="四、新建用户"></a>四、新建用户</h3><p>用户和组—用户管理—增加—输入用户名和密码—完成</p><img src=https://img05.656886.xyz/two.png><h3 id="五、配置DNS服务器给邮件服务器进行域名解析"><a href="#五、配置DNS服务器给邮件服务器进行域名解析" class="headerlink" title="五、配置DNS服务器给邮件服务器进行域名解析"></a>五、配置DNS服务器给邮件服务器进行域名解析</h3><p>服务器管理器—工具—双击“WIN”—正向查找区域—新建区域—一直下一步—区域名称填邮件服务器的域名(mail.fuck.com)</p><img src=https://img05.656886.xyz/three.png><p>确保VMnet8的DNS服务器地址为DNS服务器的IP地址</p><img src=https://img05.656886.xyz/four.png><p>服务器管理器—DNS管理器—选中<code>mail.fuck.com</code>—新建主机—IP地址填邮件服务器的IP地址</p><img src=https://img05.656886.xyz/five.png><h3 id="六、浏览器输入域名进行访问-——成功"><a href="#六、浏览器输入域名进行访问-——成功" class="headerlink" title="六、浏览器输入域名进行访问 ——成功"></a>六、浏览器输入域名进行访问 ——成功</h3><img src=https://img05.656886.xyz/six.png><hr><h1 align=center>至此，搭建邮件服务器并通过DNS服务器进行域名解析访问的所有步骤如上！</h1>]]></content>
+        <content type="html"><![CDATA[<p>hi111</p>]]></content>
       
       
       <categories>
           
-          <category> 中小企业网络构建 </category>
+          <category> 机场推荐 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 中小企业网络构建 </tag>
+            <tag> 机场推荐 </tag>
             
         </tags>
       
@@ -146,6 +146,56 @@
         <tags>
             
             <tag> 中小企业网络构建 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>配置DNS服务器进行域名解析+配置邮件服务器</title>
+      <link href="/undefined/%E9%85%8D%E7%BD%AEDNS%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%9B%E8%A1%8C%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90+%E9%85%8D%E7%BD%AE%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+      <url>/undefined/%E9%85%8D%E7%BD%AEDNS%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%9B%E8%A1%8C%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90+%E9%85%8D%E7%BD%AE%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+      
+        <content type="html"><![CDATA[<h2 id="配置DNS服务器实现域名解析访问Web服务器"><a href="#配置DNS服务器实现域名解析访问Web服务器" class="headerlink" title="配置DNS服务器实现域名解析访问Web服务器"></a>配置DNS服务器实现域名解析访问Web服务器</h2><h3 id="需要一台Server2022作为搭建DNS服务器的载体"><a href="#需要一台Server2022作为搭建DNS服务器的载体" class="headerlink" title="需要一台Server2022作为搭建DNS服务器的载体"></a>需要一台Server2022作为搭建DNS服务器的载体</h3><h3 id="需要一台Web服务器"><a href="#需要一台Web服务器" class="headerlink" title="需要一台Web服务器"></a>需要一台Web服务器</h3><h4 id="一、搭建DNS服务器"><a href="#一、搭建DNS服务器" class="headerlink" title="一、搭建DNS服务器"></a>一、搭建DNS服务器</h4><h5 id="1、服务器管理器—添加角色和功能—勾选DNS服务器—一直点击下一步直至安装完成"><a href="#1、服务器管理器—添加角色和功能—勾选DNS服务器—一直点击下一步直至安装完成" class="headerlink" title="1、服务器管理器—添加角色和功能—勾选DNS服务器—一直点击下一步直至安装完成"></a>1、服务器管理器—添加角色和功能—勾选DNS服务器—一直点击下一步直至安装完成</h5><img src=https://img03.656886.xyz/1-17308819689011.png><img src=https://img03.656886.xyz/2-17308819765763.png><img src=https://img03.656886.xyz/3-17308820077787.png><h4 id="2、配置DNS"><a href="#2、配置DNS" class="headerlink" title="2、配置DNS"></a>2、配置DNS</h4><h5 id="工具—DNS—双击此服务器名称—右键正向查找区域—新建区域向导—输入区域名称一直点击下一步直至完成"><a href="#工具—DNS—双击此服务器名称—右键正向查找区域—新建区域向导—输入区域名称一直点击下一步直至完成" class="headerlink" title="工具—DNS—双击此服务器名称—右键正向查找区域—新建区域向导—输入区域名称一直点击下一步直至完成"></a>工具—DNS—双击此服务器名称—右键正向查找区域—新建区域向导—输入区域名称一直点击下一步直至完成</h5><img src=https://img03.656886.xyz/4-17308820124189.png><img src=https://img03.656886.xyz/5-173088201681111.png><h5 id="右键新建的区域名称—点击新建主机—输入名称和IP地址-此处的IP地址填写Web服务器的IP地址"><a href="#右键新建的区域名称—点击新建主机—输入名称和IP地址-此处的IP地址填写Web服务器的IP地址" class="headerlink" title="右键新建的区域名称—点击新建主机—输入名称和IP地址(此处的IP地址填写Web服务器的IP地址)"></a>右键新建的区域名称—点击新建主机—输入名称和IP地址(此处的IP地址填写Web服务器的IP地址)</h5><img src=https://img03.656886.xyz/6-173088202109013.png><img src=https://img03.656886.xyz/7-173088202411415.png><h3 id="客户端PC使用DNS的服务"><a href="#客户端PC使用DNS的服务" class="headerlink" title="客户端PC使用DNS的服务"></a>客户端PC使用DNS的服务</h3><h4 id="1、修改DNS首选服务器的IP地址"><a href="#1、修改DNS首选服务器的IP地址" class="headerlink" title="1、修改DNS首选服务器的IP地址"></a>1、修改DNS首选服务器的IP地址</h4><h5 id="右键右下角网络图标—打开“网络和Internet设置”—点击更改适配器选项—右键”Ethernet0网卡”—属性—双击协议版本4—点击使用下面的DNS服务器地址-此处填写DNS服务器的IP地址"><a href="#右键右下角网络图标—打开“网络和Internet设置”—点击更改适配器选项—右键”Ethernet0网卡”—属性—双击协议版本4—点击使用下面的DNS服务器地址-此处填写DNS服务器的IP地址" class="headerlink" title="右键右下角网络图标—打开“网络和Internet设置”—点击更改适配器选项—右键”Ethernet0网卡”—属性—双击协议版本4—点击使用下面的DNS服务器地址(此处填写DNS服务器的IP地址)"></a>右键右下角网络图标—打开“网络和Internet设置”—点击更改适配器选项—右键”Ethernet0网卡”—属性—双击协议版本4—点击使用下面的DNS服务器地址(此处填写DNS服务器的IP地址)</h5><img src=https://img03.656886.xyz/8-173088202770117.png><img src=https://img03.656886.xyz/9-173088203231019.png><h4 id="2、通过浏览器输入域名访问Web服务器"><a href="#2、通过浏览器输入域名访问Web服务器" class="headerlink" title="2、通过浏览器输入域名访问Web服务器"></a>2、通过浏览器输入域名访问Web服务器</h4><img src=https://img03.656886.xyz/10-173088203657321.png><h1 align=center>至此，搭建DNS服务实现域名解析访问Web服务器的所有步骤如上！</h1><hr><h1 id="配置邮件服务器-搭配DNS服务器进行域名解析"><a href="#配置邮件服务器-搭配DNS服务器进行域名解析" class="headerlink" title="配置邮件服务器(搭配DNS服务器进行域名解析)"></a>配置邮件服务器(搭配DNS服务器进行域名解析)</h1><h6 id="PS：准备两台Win-Server2022-一台搭建DNS一台搭建邮件服务器"><a href="#PS：准备两台Win-Server2022-一台搭建DNS一台搭建邮件服务器" class="headerlink" title="PS：准备两台Win Server2022 一台搭建DNS一台搭建邮件服务器"></a>PS：准备两台Win Server2022 一台搭建DNS一台搭建邮件服务器</h6><h3 id="一、安装邮件服务器应用"><a href="#一、安装邮件服务器应用" class="headerlink" title="一、安装邮件服务器应用"></a>一、安装邮件服务器应用</h3><p>下载好winmail x86_32安装包，双击运行进行安装</p><img src=https://img03.656886.xyz/11-173088215086337.png><p>一路默认，下一步直至安装完成（配置的密码记住，等待重启完成）</p><img src=https://img03.656886.xyz/12-173088215407139.png><img src=https://img03.656886.xyz/13-173088215798341.png><h3 id="二、进入邮件服务器管理工具进行配置"><a href="#二、进入邮件服务器管理工具进行配置" class="headerlink" title="二、进入邮件服务器管理工具进行配置"></a>二、进入邮件服务器管理工具进行配置</h3><p>双击打开应用登录进行配置</p><img src=https://img03.656886.xyz/14-173088216166243.png><p>点击用户和组—用户管理—修改密码后浏览器输入邮件服务器的IP地址:6080即可访问登录</p><img src=https://img03.656886.xyz/16-173088217492946.png><img src=https://img03.656886.xyz/17-173088217828748.png><h3 id="三、修改邮件服务器的HTTP端口"><a href="#三、修改邮件服务器的HTTP端口" class="headerlink" title="三、修改邮件服务器的HTTP端口"></a>三、修改邮件服务器的HTTP端口</h3><p>系统设置—系统服务—HTTP—修改为80</p><img src=https://img05.656886.xyz/one.png><h3 id="四、新建用户"><a href="#四、新建用户" class="headerlink" title="四、新建用户"></a>四、新建用户</h3><p>用户和组—用户管理—增加—输入用户名和密码—完成</p><img src=https://img05.656886.xyz/two.png><h3 id="五、配置DNS服务器给邮件服务器进行域名解析"><a href="#五、配置DNS服务器给邮件服务器进行域名解析" class="headerlink" title="五、配置DNS服务器给邮件服务器进行域名解析"></a>五、配置DNS服务器给邮件服务器进行域名解析</h3><p>服务器管理器—工具—双击“WIN”—正向查找区域—新建区域—一直下一步—区域名称填邮件服务器的域名(mail.fuck.com)</p><img src=https://img05.656886.xyz/three.png><p>确保VMnet8的DNS服务器地址为DNS服务器的IP地址</p><img src=https://img05.656886.xyz/four.png><p>服务器管理器—DNS管理器—选中<code>mail.fuck.com</code>—新建主机—IP地址填邮件服务器的IP地址</p><img src=https://img05.656886.xyz/five.png><h3 id="六、浏览器输入域名进行访问-——成功"><a href="#六、浏览器输入域名进行访问-——成功" class="headerlink" title="六、浏览器输入域名进行访问 ——成功"></a>六、浏览器输入域名进行访问 ——成功</h3><img src=https://img05.656886.xyz/six.png><hr><h1 align=center>至此，搭建邮件服务器并通过DNS服务器进行域名解析访问的所有步骤如上！</h1>]]></content>
+      
+      
+      <categories>
+          
+          <category> 中小企业网络构建 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 中小企业网络构建 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>科学上网</title>
+      <link href="/undefined/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"/>
+      <url>/undefined/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/</url>
+      
+        <content type="html"><![CDATA[<p>hi111</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 科学上网 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 科学上网 </tag>
             
         </tags>
       
