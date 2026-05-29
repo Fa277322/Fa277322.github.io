@@ -1,0 +1,574 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>Nginx负载均衡和反向代理 | F Blog</title><meta name="keywords" content="Nginx,负载均衡,反向代理,集群"><meta name="author" content="Fa"><meta name="copyright" content="Fa"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="Nginx负载均衡和反向代理"><meta name="application-name" content="Nginx负载均衡和反向代理"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="Nginx负载均衡和反向代理"><meta property="og:url" content="http://blog.656886.xyz/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%92%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/index.html"><meta property="og:site_name" content="F Blog"><meta property="og:description" content="Nginx六种负载均衡策略详解及反向代理配置实践"><meta property="og:locale" content="zh-CN"><meta property="og:image" content="https://img01.656886.xyz/%E5%92%95%E5%92%95.jpg"><meta property="article:author" content="Fa"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://img01.656886.xyz/%E5%92%95%E5%92%95.jpg"><meta name="description" content="Nginx六种负载均衡策略详解及反向代理配置实践"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="http://blog.656886.xyz/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%92%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: undefined,
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"w(ﾟДﾟ)w 不要走！再看看嘛！","backTitle":"♪(^∇^*)欢迎肥来！"},
+  LA51: undefined,
+  greetingBox: undefined,
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  music_page_default: "nav_music",
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: undefined,
+  authorStatus: {"skills":null},
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"作者: Fa","link":"链接: ","source":"来源: F Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。","copySuccess":"复制成功，复制和转载请标注本文地址"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'F Blog',
+  title: 'Nginx负载均衡和反向代理',
+  postAI: '',
+  pageFillDescription: 'Nginx反向代理和负载均衡, 一、Nginx的应用场景与区别, 二、Nginx反向代理配置, 三、Nginx负载均衡和策略, 什么是负载均衡？, 基于Nginx实现负载均衡——六种负载均衡策略, 四、软负载与硬负载有哪些区别反向代理和负载均衡一的应用场景与区别能够实现哪些事情应用场景反向代理客户端使用转发到真实服务器访问从而保证真实服务安全性负载均衡能够对集群的节点实现负载均衡微服务网关入口实现对服务转发根据域名路由到真实的服务静态资源服务器比性能高很多可以存放静态资源保护网站安全策略熔断防止攻击限流正向代理反向代理隐藏用户行为隐藏真实服务器隐藏真实服务地址安全比如访问一些国外的网站需要通过翻墙才可以访问这时候就可以使用正向代理隐藏用户行为客户端请求打到代理服务器再通过代理服务器转发到真实服务器二反向代理配置基于实现反向代理文件中新增文件中新增反向代理配置使用创建了监听端口号码为根据规则匹配反向代理配置实现反向代理访问端口代理至端口默认查找三负载均衡和策略什么是负载均衡当一台服务器的单位时间内的访问量越大时服务器压力就越大大到超过自身承受能力时服务器就会崩溃为了避免服务器崩溃让用户有更好的体验通过负载均衡的方式来分担服务器压力我们可以建立很多很多服务器服务器集群解决高并发组成一个服务器集群当用户访问网站时先访问一个中间服务器再让这个中间服务器在服务器集群中选择一个压力较小的服务器然后将该访问请求引入该服务器如此以来用户的每次访问都会保证服务器集群中的每个服务器压力趋于平衡分担了服务器压力避免了服务器崩溃的情况服务器集群中会存在哪些问题服务器集群中的包都是完全相同的分布式一致性问题可以使用框架或者替代解决分布式任务调度重复执行分布式任务调度平台分布式日志收集问题日志收集分布式事务和集群没有关系目前服务器的模块支持种方式的分配名称说明轮询默认方式权重方式依据分配方式最少连接方式第三方响应时间方式第三方依据分配方式基于实现负载均衡六种负载均衡策略轮询默认指定权重绑定最少连接第三方第三方每个请求按时间顺序逐一分配到不同的后端服务器如果后端服务器掉能自动剔除指定轮询几率权重和访问比率成正比用于后端服务器性能不均的情况每个请求按访问的结果分配这样每个访客固定访问一个后端服务器可以解决的问题把请求转发给连接数较少的后端服务器按后端服务器的响应时间来分配请求响应时间短的优先分配按访问的结果来分配请求使每个定向到同一个后端服务器后端服务器为缓存时比较有效哈希是一种常用的技术将数据如字符串文件等转换为固定长度的值或键这个过程通常用于提高数据检索的效率比如在数据库索引缓存数据加密等领域在网络会话管理中指服务器与浏览器间的会话机制通过识别用户身份采用或重写传输并需考虑安全策略如加密访问率是互联网领域用于衡量用户访问行为的基础指标这个术语在其他广告媒体上也和在网络上一样使用该术语通过统计用户访问次数与目标群体总量的比值反映特定时期内用户接触媒介内容的频率计算方式同类网站访问率同类网站访问量网站总访问量轮询法默认最基本的配置方法上面的例子就是轮询的方式它是模块默认的负载均衡默认策略每个请求会按时间顺序逐一分配到不同的后端服务器参数名称说明与结合使用设置在参数设置的时间内最大失败次数如果在这个时间内所有针对该服务器的请求都失败了那么认为该服务器会被认为是停机了服务器会被认为停机的时间长度默认为标记该服务器为备用服务器当主服务器停止时请求会被发送到它这里标记服务器永久停机了注意在轮询中如果服务器掉了会自动剔除该服务器缺省配置就是轮询策略此策略适合服务器配置相当无状态且短平快的服务使用定义上游服务器需要被真实代理访问的服务器默认是轮询机制上游服务器集群节点新增集群节点默认策略负载均衡轮询机制使用创建了监听端口号码为根据规则匹配反向代理配置默认查找指定权重加权轮询法权重方式在轮询策略的基础上指定轮询的几率权重越大访问越多定义上游服务器需要被真实代理访问的服务器默认是轮询机制上游服务器集群节点新增集群节点默认策略负载均衡轮询机制权重权重使用创建了监听端口号码为根据规则匹配反向代理配置默认查找注意权重越高分配到需要处理的请求越多此策略可以与和结合使用此策略比较适合服务器的硬件配置差别比较大的情况绑定源地址哈希法指定负载均衡器按照基于客户端的分配方式这个方法确保了相同的客户端的请求一直发送到相同的服务器以保证会话这样每个访客都固定访问一个后端服务器可以解决不能跨服务器的问题动态服务器组保证每个访客固定访问一个后端服务器注意在版本之前不能在中使用权重不能与同时使用此策略适合有状态服务比如当有服务器需要剔除必须手动掉缺点分配到哪台节点后面会一直访问同一台节点但集群就没有效果了无意义最少连接把请求转发给连接数较少的后端服务器轮询算法是把请求平均的转发给各个后端使它们的负载大致相同但是有些请求占用的时间很长会导致其所在的后端负载较高这种情况下这种方式就可以达到更好的负载均衡效果动态服务器组把请求转发给连接数较少的后端服务器注意此负载均衡策略适合请求处理时间长短不一造成服务器过载的情况法第三方按照服务器端的响应时间来分配请求响应时间短的优先分配在中使用负载均衡算法必须安装模块这个模块是第三方插件默认未包含在的标准发行版中因此需要手动编译和安装安装模块下载源码下载模块源码编译并安装在源码项目下使用以下命令编译同时添加模块配置使用算法在配置文件中可以通过以下配置算法来使用算法动态服务器组实现响应时间短的优先分配在这里定义了一个名为的上游服务器组并启用了负载均衡算法注意事项兼容性问题由于是一个第三方模块可能在某些版本中不兼容因此在使用前应仔细检查模块的版本与的兼容性性能问题算法虽然能动态分配请求减轻服务器压力但也需要一定的计算资源来实时监控服务器的响应时间因此在高并发环境下可能带来额外的性能开销调试和日志为了监控算法的工作情况可以在配置中增加日志记录监控每台服务器的响应时间和负载情况这有助于理解算法的决策过程并在必要时进行调优实际应用中的优势负载均衡算法非常适合应用在以下场景中后端服务器性能差异较大在某些环境中后端服务器的硬件配置不同或者运行的服务消耗的资源不同这导致它们的处理能力存在差异算法可以根据实际情况动态分配请求避免性能较差的服务器过载请求处理时间不均衡如果不同请求的处理时间差异很大例如有些请求需要进行复杂的数据库查询或计算算法能够平衡这些负载防止某些服务器因为处理耗时请求而被大量占用高可用性和响应速度优化在需要提高系统响应速度的场景中算法能够通过实时监控和调整减少用户请求的平均响应时间提高用户体验第三方按访问的结果来分配请求使每个定向到同一个后端服务器要配合缓存命中来使用同一个资源多次请求可能会到达不同的服务器上导致不必要的多次下载缓存命中率不高以及一些资源时间的浪费而使用可以使得同一个也就是同一个资源请求会到达同一台服务器一旦缓存住了资源再此收到请求就可以从缓存中读取动态服务器组实现每个定向到同一个后端服务器以上便是种负载均衡策略的实现方式其中除了轮询和轮询权重外都是根据不同的算法实现的在实际运用中需要根据不同的场景选择性运用大都是多种策略结合使用以达到实际需求四软负载与硬负载有哪些区别硬负载基于专用物理设备如独立于操作系统运行直接处理网络流量不消耗服务器资源软负载通过软件如部署在普通服务器或虚拟机上依赖宿主机操作系统和硬件性能性能与稳定性硬负载高性能专用芯片加速处理支持高并发如百万级请求延迟低高稳定性硬件级故障隔离适合金融政务等关键业务软负载性能受限受服务器内存约束大规模流量如并发万易成瓶颈稳定性一般需额外配置冗余如防单点故障成本与扩展性硬负载成本高设备采购价万万元维护需专业团队扩展性差新增流量需追加硬件节点灵活性低软负载成本低开源软件免费仅需服务器资源扩展性好支持云环境动态扩缩容如快速响应流量变化',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-05-29 22:50:40',
+  postMainColor: '',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://img01.656886.xyz/%E5%92%95%E5%92%95.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><a id="site-name" href="/" accesskey="h"><div class="title">F Blog</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 教程TUTORIAL</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 全部文章</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 文章分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 推荐REC</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/categories/%E6%90%AD%E5%BB%BA%E7%B1%BB/"><span> 搭建类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/%E6%95%99%E7%A8%8B%E7%B1%BB/"><span> 教程类</span></a></li><li><a class="site-page child faa-parent animated-hover" target="_blank" rel="noopener" href="https://ssh.cmliussss.net/"><span> WebSSH</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 公益服务CSR</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" target="_blank" rel="noopener" href="https://github.fxxk.dedyn.io/"><i class="anzhiyufont anzhiyu-icon-github faa-tada" style="font-size: 0.9em;"></i><span> GitHub 文件加速</span></a></li><li><a class="site-page child faa-parent animated-hover" target="_blank" rel="noopener" href="https://ssh.cmliussss.net/"><i class="anzhiyufont anzhiyu-icon-keyboard faa-tada" style="font-size: 0.9em;"></i><span> WebSSH</span></a></li><li><a class="site-page child faa-parent animated-hover" target="_blank" rel="noopener" href="https://sub.fxxk.dedyn.io/"><i class="anzhiyufont anzhiyu-icon-shuffle faa-tada" style="font-size: 0.9em;"></i><span> 订阅转换</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于F</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-house-chimney faa-tada" style="font-size: 0.9em;"></i><span> About me</span></a></li><li><a class="site-page child faa-parent animated-hover" target="_blank" rel="noopener" href="https://github.com/Fa277322?tab=repositories"><i class="anzhiyufont anzhiyu-icon-github faa-tada" style="font-size: 0.9em;"></i><span> GitHub仓库</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><div class="nav-button" id="search-button"><a class="site-page social-icon search" href="javascript:void(0);" title="搜索🔍" accesskey="s"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span> 搜索</span></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="/null" target="_blank"><img class="post-qr-code-img" alt="微信" src="/null"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/null" target="_blank"><img class="post-qr-code-img" alt="支付宝" src="/null"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> 最新评论</span></div><div class="aside-list"><span>正在加载中...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/CDN/" style="font-size: 1.05rem;">CDN<sup>1</sup></a><a href="/tags/CentOS/" style="font-size: 1.05rem;">CentOS<sup>1</sup></a><a href="/tags/Docker/" style="font-size: 1.05rem;">Docker<sup>1</sup></a><a href="/tags/Grafana/" style="font-size: 1.05rem;">Grafana<sup>1</sup></a><a href="/tags/Kafka/" style="font-size: 1.05rem;">Kafka<sup>1</sup></a><a href="/tags/Linux/" style="font-size: 1.05rem;">Linux<sup>2</sup></a><a href="/tags/Nginx/" style="font-size: 1.05rem;">Nginx<sup>3</sup></a><a href="/tags/Prometheus/" style="font-size: 1.05rem;">Prometheus<sup>1</sup></a><a href="/tags/Shell/" style="font-size: 1.05rem;">Shell<sup>1</sup></a><a href="/tags/Zabbix/" style="font-size: 1.05rem;">Zabbix<sup>1</sup></a><a href="/tags/%E4%B8%AD%E5%B0%8F%E4%BC%81%E4%B8%9A%E7%BD%91%E7%BB%9C%E6%9E%84%E5%BB%BA/" style="font-size: 1.05rem;">中小企业网络构建<sup>5</sup></a><a href="/tags/%E5%8A%A8%E9%9D%99%E5%88%86%E7%A6%BB/" style="font-size: 1.05rem;">动静分离<sup>1</sup></a><a href="/tags/%E5%8D%8E%E4%B8%BA%E4%BA%91/" style="font-size: 1.05rem;">华为云<sup>1</sup></a><a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 1.05rem;">压缩<sup>1</sup></a><a href="/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" style="font-size: 1.05rem;">反向代理<sup>1</sup></a><a href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" style="font-size: 1.05rem;">可视化<sup>1</sup></a><a href="/tags/%E5%AE%B9%E5%99%A8/" style="font-size: 1.05rem;">容器<sup>1</sup></a><a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 1.05rem;">性能优化<sup>1</sup></a><a href="/tags/%E6%90%AD%E5%BB%BA%E7%B1%BB/" style="font-size: 1.05rem;">搭建类<sup>1</sup></a><a href="/tags/%E6%95%99%E7%A8%8B%E7%B1%BB/" style="font-size: 1.05rem;">教程类<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.05rem;">消息队列<sup>1</sup></a><a href="/tags/%E7%9B%91%E6%8E%A7/" style="font-size: 1.05rem;">监控<sup>2</sup></a><a href="/tags/%E7%AC%94%E8%AE%B0/" style="font-size: 1.05rem;">笔记<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 1.05rem;">缓存<sup>1</sup></a><a href="/tags/%E8%84%9A%E6%9C%AC/" style="font-size: 1.05rem;">脚本<sup>1</sup></a><a href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96%E6%8A%80%E6%9C%AF/" style="font-size: 1.05rem;">虚拟化技术<sup>1</sup></a><a href="/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" style="font-size: 1.05rem;">负载均衡<sup>1</sup></a><a href="/tags/%E9%9B%86%E7%BE%A4/" style="font-size: 1.05rem;">集群<sup>1</sup></a><a href="/tags/%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90/" style="font-size: 1.05rem;">静态资源<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 1.05rem;">面试题<sup>1</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>归档</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/05/"><span class="card-archive-list-date">五月 2026</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">7</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/06/"><span class="card-archive-list-date">六月 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/05/"><span class="card-archive-list-date">五月 2025</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/12/"><span class="card-archive-list-date">十二月 2024</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/11/"><span class="card-archive-list-date">十一月 2024</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">6</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%BF%90%E7%BB%B4/" itemprop="url">运维</a><i class="anzhiyufont anzhiyu-icon-angle-right post-meta-separator"></i><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%BF%90%E7%BB%B4/Nginx/" itemprop="url">Nginx</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/Nginx/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>Nginx</span></a><a class="article-meta__tags" href="/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>负载均衡</span></a><a class="article-meta__tags" href="/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>反向代理</span></a><a class="article-meta__tags" href="/tags/%E9%9B%86%E7%BE%A4/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>集群</span></a></span></div></div><h1 class="post-title" itemprop="name headline">Nginx负载均衡和反向代理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2026-05-29T14:50:40.000Z" title="发表于 2026-05-29 22:50:40">2026-05-29</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2026-05-29T14:50:40.928Z" title="更新于 2026-05-29 22:50:40">2026-05-29</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为新加坡"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>新加坡</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src=""></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="http://blog.656886.xyz/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%92%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/"><header><a class="post-meta-categories" href="/categories/%E8%BF%90%E7%BB%B4/" itemprop="url">运维</a><a class="post-meta-categories" href="/categories/%E8%BF%90%E7%BB%B4/Nginx/" itemprop="url">Nginx</a><a href="/tags/Nginx/" tabindex="-1" itemprop="url">Nginx</a><a href="/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" tabindex="-1" itemprop="url">负载均衡</a><a href="/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" tabindex="-1" itemprop="url">反向代理</a><a href="/tags/%E9%9B%86%E7%BE%A4/" tabindex="-1" itemprop="url">集群</a><h1 id="CrawlerTitle" itemprop="name headline">Nginx负载均衡和反向代理</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Fa</span><time itemprop="dateCreated datePublished" datetime="2026-05-29T14:50:40.000Z" title="发表于 2026-05-29 22:50:40">2026-05-29</time><time itemprop="dateCreated datePublished" datetime="2026-05-29T14:50:40.928Z" title="更新于 2026-05-29 22:50:40">2026-05-29</time></header><h1 id="Nginx反向代理和负载均衡"><a href="#Nginx反向代理和负载均衡" class="headerlink" title="Nginx反向代理和负载均衡"></a>Nginx反向代理和负载均衡</h1><h3 id="一、Nginx的应用场景与区别"><a href="#一、Nginx的应用场景与区别" class="headerlink" title="一、Nginx的应用场景与区别"></a>一、Nginx的应用场景与区别</h3><p><strong>Nginx能够实现哪些事情？（应用场景）</strong></p>
+<p>1.反向代理：客户端使用Nginx转发到真实服务器访问，从而保证真实服务安全性；</p>
+<p>2.负载均衡：能够对集群的节点实现负载均衡；</p>
+<p>3.微服务网关入口：实现对服务转发 根据域名路由到真实的服务；</p>
+<p>4.静态资源服务器：比Tomcat性能高很多，可以存放静态资源；</p>
+<p>5.保护网站：安全策略、熔断、防止ddos攻击、限流；</p>
+<table>
+<thead>
+<tr>
+<th align="center">正向代理</th>
+<th align="center">反向代理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">隐藏用户行为</td>
+<td align="center">隐藏真实服务器、隐藏真实服务ip地址 安全</td>
+</tr>
+<tr>
+<td align="center">比如访问一些国外的网站，需要通过VPN翻墙才可以访问，这时候就可以使用正向代理隐藏用户行为</td>
+<td align="center">客户端请求打到代理服务器，再通过代理服务器转发到真实服务器</td>
+</tr>
+</tbody></table>
+<h3 id="二、Nginx反向代理配置"><a href="#二、Nginx反向代理配置" class="headerlink" title="二、Nginx反向代理配置"></a>二、Nginx反向代理配置</h3><p><strong>基于Nginx实现反向代理</strong></p>
+<p>Windows：	C:\Windows\System32\drivers\etc host文件中新增</p>
+<p>Linux：			&#x2F;etc&#x2F;nginx&#x2F;nginx.conf文件中新增</p>
+<p>反向代理配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">	# 使用nginx创建了监听端口号码为80</span><br><span class="line">	listen 80;</span><br><span class="line">	## localhost</span><br><span class="line">	server_name www.baidu.com;</span><br><span class="line">	## 根据url规则匹配</span><br><span class="line">	location / &#123;</span><br><span class="line">	## 反向代理配置</span><br><span class="line">		proxy_pass http://127.0.0.1:8080;	#实现反向代理 访问80端口代理至8080端口</span><br><span class="line">		## 默认查找index</span><br><span class="line">		index index.html index.htm;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="三、Nginx负载均衡和策略"><a href="#三、Nginx负载均衡和策略" class="headerlink" title="三、Nginx负载均衡和策略"></a>三、Nginx负载均衡和策略</h3><h3 id="什么是负载均衡？"><a href="#什么是负载均衡？" class="headerlink" title="什么是负载均衡？"></a>什么是负载均衡？</h3><p>当一台<a target="_blank" rel="noopener" href="https://cloud.tencent.com/product/cvm?from_column=20065&from=20065">服务器</a>的单位时间内的访问量越大时，服务器压力就越大，大到超过自身承受能力时，服务器就会崩溃。为了避免服务器崩溃，让用户有更好的体验，通过负载均衡的方式来分担服务器压力。</p>
+<p>我们可以建立很多很多服务器(服务器集群)——解决高并发，组成一个服务器集群，当用户访问网站时，先访问一个中间服务器，再让这个中间服务器在服务器集群中选择一个压力较小的服务器，然后将该访问请求引入该服务器。如此以来，用户的每次访问，都会保证服务器集群中的每个服务器压力趋于平衡，分担了服务器压力，避免了服务器崩溃的情况。</p>
+<p><strong>服务器集群中会存在哪些问题？</strong></p>
+<p>服务器集群中的jar包都是完全相同的</p>
+<p>1.分布式Session一致性问题：可以使用spring-session框架或者Token替代解决</p>
+<p>2.分布式任务调度重复执行：分布式任务调度平台 <a target="_blank" rel="noopener" href="https://blog.csdn.net/chang_mao/article/details/135954996">xxl-job</a></p>
+<p>3.分布式日志收集问题：<a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/1681314">elk+kafka日志收集</a></p>
+<p>​	分布式事务和集群没有关系</p>
+<p> <strong>目前Nginx服务器的upstream模块支持6种方式的分配：</strong></p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>轮询</td>
+<td>默认方式</td>
+</tr>
+<tr>
+<td>weight</td>
+<td>权重方式</td>
+</tr>
+<tr>
+<td>ip_hash</td>
+<td>依据ip分配方式</td>
+</tr>
+<tr>
+<td>least_conn</td>
+<td>最少连接方式</td>
+</tr>
+<tr>
+<td>fair(第三方)</td>
+<td>响应时间方式</td>
+</tr>
+<tr>
+<td>url_hash(第三方)</td>
+<td>依据URL分配方式</td>
+</tr>
+</tbody></table>
+<h3 id="基于Nginx实现负载均衡——六种负载均衡策略"><a href="#基于Nginx实现负载均衡——六种负载均衡策略" class="headerlink" title="基于Nginx实现负载均衡——六种负载均衡策略"></a><strong>基于Nginx实现负载均衡——六种负载均衡策略</strong></h3><table>
+<thead>
+<tr>
+<th>轮询(默认)</th>
+<th>指定权重(weight)</th>
+<th>IP绑定<code>ip_hash</code></th>
+<th>least_conn(最少连接)</th>
+<th>fair(第三方)</th>
+<th>url hash(第三方)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器down掉，能自动剔除</td>
+<td>指定轮询几率，<code>weight(权重)</code>和<code>访问比率</code>成正比，用于后端服务器性能不均的情况</td>
+<td>每个请求按<code>访问ip的hash结果</code>分配，这样每个访客固定访问一个后端服务器，可以解决<code>session</code>的问题。</td>
+<td>把请求转发给连接数较少的后端服务器。</td>
+<td>按后端服务器的<code>响应时间</code>来分配请求，<code>响应时间短</code>的优先分配</td>
+<td>按<code>访问url的hash结果</code>来分配请求，使每个url定向到同一个后端服务器，后端服务器为<code>缓存</code>时比较有效</td>
+</tr>
+</tbody></table>
+<p><code>哈希（Hashing）是一种常用的技术，将数据（如字符串、文件等）转换为固定长度的值或键（Key）。这个过程通常用于提高数据检索的效率，比如在数据库索引、缓存、数据加密等领域。</code></p>
+<p><code>在网络会话管理中，指服务器与浏览器间的会话机制，通过Session ID识别用户身份，采用Cookie或URL重写传输ID，并需考虑安全策略如HTTPS加密。‌</code></p>
+<p><code>访问率是互联网领域用于衡量用户访问行为的基础指标，这个术语在其他广告媒体上也和在网络上一样使用。该术语通过统计用户访问次数与目标群体总量的比值，反映特定时期内用户接触媒介内容的频率。计算方式：*同类网站访问率= 同类网站访问量÷网站总访问量×100%* </code></p>
+<p>**1、轮询法(默认)**：最基本的配置方法，上面的例子就是轮询的方式，它是upstream模块默认的负载均衡默认策略。每个请求会按时间顺序逐一分配到不同的后端服务器。</p>
+<p><strong>参数</strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">fail_timeout</td>
+<td>与max_fails结合使用。</td>
+</tr>
+<tr>
+<td align="center">max_fails</td>
+<td>设置在fail_timeout参数设置的时间内最大失败次数，如果在这个时间内，所有针对该服务器的请求都失败了，那么认为该服务器会被认为是停机了。</td>
+</tr>
+<tr>
+<td align="center">fail_time</td>
+<td>服务器会被认为停机的时间长度,默认为10s。</td>
+</tr>
+<tr>
+<td align="center">backup</td>
+<td>标记该服务器为备用服务器。当主服务器停止时，请求会被发送到它这里。</td>
+</tr>
+<tr>
+<td align="center">down</td>
+<td>标记服务器永久停机了。</td>
+</tr>
+</tbody></table>
+<p><strong>注意：</strong> 在轮询中，如果服务器down掉了，会自动剔除该服务器。 缺省配置就是轮询策略。此策略适合服务器配置相当，无状态且短平快的服务使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">nginx.conf</span><br><span class="line">###定义上游服务器(需要被nginx真实代理访问的服务器) 默认是轮询机制</span><br><span class="line">##上游服务器集群节点</span><br><span class="line">upstream backServer&#123;</span><br><span class="line">	##新增集群节点 默认策略负载均衡(轮询机制)</span><br><span class="line">	server 127.0.0.1:8080;</span><br><span class="line">	server 127.0.0.1:8081;	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">	# 使用nginx创建了监听端口号码为80</span><br><span class="line">	listen 80;</span><br><span class="line">	## localhost</span><br><span class="line">	server_name www.baidu.com;</span><br><span class="line">	## 根据url规则匹配</span><br><span class="line">	location / &#123;</span><br><span class="line">	## 反向代理配置</span><br><span class="line">		proxy_pass http://backServer;</span><br><span class="line">		## 默认查找index</span><br><span class="line">		index index.html index.htm;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>2、指定权重（加权轮询法）</strong></p>
+<p>权重方式，在轮询策略的基础上指定轮询的几率 —— 权重越大，访问越多</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">nginx.conf</span><br><span class="line">###定义上游服务器(需要被nginx真实代理访问的服务器) 默认是轮询机制</span><br><span class="line">##上游服务器集群节点</span><br><span class="line">upstream backServer&#123;</span><br><span class="line">	##新增集群节点 默认策略负载均衡(轮询机制)</span><br><span class="line">	server 127.0.0.1:8080 weight=1;			#权重1</span><br><span class="line">	server 127.0.0.1:8081 weight=2;			#权重2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">	# 使用nginx创建了监听端口号码为80</span><br><span class="line">	listen 80;</span><br><span class="line">	## localhost</span><br><span class="line">	server_name www.baidu.com;</span><br><span class="line">	## 根据url规则匹配</span><br><span class="line">	location / &#123;</span><br><span class="line">	## 反向代理配置</span><br><span class="line">		proxy_pass http://backServer;</span><br><span class="line">		## 默认查找index</span><br><span class="line">		index index.html index.htm;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong></p>
+<ul>
+<li>权重越高分配到需要处理的请求越多。</li>
+<li>此策略可以与least_conn和ip_hash结合使用。</li>
+<li>此策略比较适合服务器的硬件配置差别比较大的情况。</li>
+</ul>
+<hr>
+<p><strong>3、IP绑定<code>ip_hash</code>(源地址哈希法)</strong></p>
+<p>指定<a target="_blank" rel="noopener" href="https://cloud.tencent.com/product/clb?from_column=20065&from=20065">负载均衡器</a>按照基于客户端IP的分配方式，这个方法确保了相同的客户端的请求一直发送到相同的服务器，以保证session会话。这样每个访客都固定访问一个后端服务器，可以解决session不能跨服务器的问题。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#动态服务器组</span><br><span class="line">  upstream backServer &#123;</span><br><span class="line">    ip_hash;  #保证每个访客固定访问一个后端服务器</span><br><span class="line">    server localhost:8080  weight=2; #tomcat 7.0</span><br><span class="line">    server localhost:8081; #tomcat 8.0</span><br><span class="line">    server localhost:8082; #tomcat 8.5</span><br><span class="line">    server localhost:8083  max_fails=3 fail_timeout=20s; #tomcat 9.0</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong></p>
+<ul>
+<li>在nginx版本1.3.1之前，不能在ip_hash中使用权重（weight）。</li>
+<li>ip_hash不能与backup同时使用。</li>
+<li>此策略适合有状态服务，比如session。当有服务器需要剔除，必须手动down掉。</li>
+<li>缺点：分配到哪台节点，后面会一直访问同一台节点，但集群就没有效果了，无意义</li>
+</ul>
+<hr>
+<p><strong>4、least_conn(最少连接)</strong></p>
+<p>把请求转发给连接数较少的后端服务器。轮询算法是把请求平均的转发给各个后端，使它们的负载大致相同；但是，有些请求占用的时间很长，会导致其所在的后端负载较高。这种情况下，least_conn这种方式就可以达到更好的负载均衡效果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#动态服务器组</span><br><span class="line">upstream backServer &#123;</span><br><span class="line">  least_conn;  #把请求转发给连接数较少的后端服务器</span><br><span class="line">  server localhost:8080  weight=2; #tomcat 7.0</span><br><span class="line">  server localhost:8081; #tomcat 8.0</span><br><span class="line">  server localhost:8082 backup; #tomcat 8.5</span><br><span class="line">  server localhost:8083  max_fails=3 fail_timeout=20s; #tomcat 9.0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong> 此负载均衡策略适合请求处理时间长短不一造成服务器过载的情况</p>
+<hr>
+<p><strong>5、fair法(第三方)</strong></p>
+<p>按照服务器端的响应时间来分配请求，响应时间短的优先分配。</p>
+<p>在Nginx中使用Fair负载均衡算法，必须安装<code>ngx_http_upstream_fair_module</code>模块。这个模块是第三方插件，默认未包含在Nginx的标准发行版中，因此需要手动编译和安装。</p>
+<p><strong>安装<code>Fair</code>模块</strong></p>
+<p>1、下载Nginx源码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget http://nginx.org/download/nginx-&lt;version&gt;.tar.gz</span><br><span class="line">tar -zxvf nginx-&lt;version&gt;.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>2、下载<code>Fair</code>模块源码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/itoffshore/nginx-upstream-fair.git</span><br></pre></td></tr></table></figure>
+
+<p>3、编译并安装Nginx：在Nginx源码项目下，使用以下命令编译Nginx，同时添加<code>Fair</code>模块</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> nginx-&lt;version&gt;</span><br><span class="line">./configure --add-module=../nginx-upstream-fair</span><br><span class="line">make</span><br><span class="line"><span class="built_in">sudo</span> make install</span><br></pre></td></tr></table></figure>
+
+<p>4、配置Nginx使用<code>Fair算法</code>：在Nginx配置文件(<code>nginx.conf</code>)中，可以通过以下配置算法来使用<code>Fair算法</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#动态服务器组</span><br><span class="line">upstream backend_Server &#123;</span><br><span class="line">  server localhost:8080; #tomcat 7.0	//server ***.***.***.***:8081;</span><br><span class="line">  server localhost:8081; #tomcat 8.0	//server ***.***.***.***:8082;</span><br><span class="line">  server localhost:8082; #tomcat 8.5</span><br><span class="line">  server localhost:8083; #tomcat 9.0</span><br><span class="line">  fair;  #实现响应时间短的优先分配</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这里，定义了一个名为<code>backend_Server</code>的上游服务器组，并启用了Fair负载均衡算法</p>
+<p><strong>注意事项</strong></p>
+<p><strong>1.兼容性问题：</strong>由于<code>ngx_http_upstream_fair_module</code>是一个第三方模块，可能在某些Nginx版本中不兼容，因此在使用前应仔细检查模块的版本与Nginx的兼容性</p>
+<p><strong>2.性能问题：</strong>Fair算法虽然能动态分配请求，减轻服务器压力，但也需要一定的计算资源来实时监控服务器的响应时间，因此在高并发环境下可能带来额外的性能开销。</p>
+<p><strong>3.调试和日志：</strong>为了监控Fair算法的工作情况，可以在Nginx配置中增加日志记录，监控每台服务器的响应时间和负载情况。这有助于理解算法的决策过程，并在必要时进行调优。</p>
+<p><strong>实际应用中的优势</strong></p>
+<p><strong>Fair负载均衡算法非常适合应用在以下场景中：</strong></p>
+<p><strong>1.后端服务器性能差异较大：</strong>在某些环境中，后端服务器的硬件配置不同，或者运行的服务消耗的资源不同，这导致它们的处理能力存在差异。Fair算法可以根据实际情况动态分配请求，避免性能较差的服务器过载。</p>
+<p><strong>2.请求处理时间不均衡：</strong>如果不同请求的处理时间差异很大（例如有些请求需要进行复杂的数据库查询或计算），Fair算法能够平衡这些负载，防止某些服务器因为处理耗时请求而被大量占用。</p>
+<p><strong>3.高可用性和响应速度优化：</strong>在需要提高系统响应速度的场景中，Fair算法能够通过实时监控和调整，减少用户请求的平均响应时间，提高用户体验。</p>
+<hr>
+<p><strong>6、url hash(第三方)</strong>  </p>
+<p>按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，要配合缓存命中来使用。同一个资源多次请求，可能会到达不同的服务器上，导致不必要的多次下载，缓存命中率不高，以及一些资源时间的浪费。而使用url_hash，可以使得同一个url（也就是同一个资源请求）会到达同一台服务器，一旦缓存住了资源，再此收到请求，就可以从缓存中读取。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#动态服务器组</span><br><span class="line">upstream backServer &#123;</span><br><span class="line">  hash $request_uri;  #实现每个url定向到同一个后端服务器</span><br><span class="line">  server localhost:8080; #tomcat 7.0</span><br><span class="line">  server localhost:8081; #tomcat 8.0</span><br><span class="line">  server localhost:8082; #tomcat 8.5</span><br><span class="line">  server localhost:8083; #tomcat 9.0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上便是6种负载均衡策略的实现方式，其中除了轮询和轮询权重外，都是Nginx根据不同的算法实现的。在实际运用中，需要根据不同的场景选择性运用，大都是多种策略结合使用以达到实际需求。</p>
+<hr>
+<h3 id="四、软负载与硬负载有哪些区别"><a href="#四、软负载与硬负载有哪些区别" class="headerlink" title="四、软负载与硬负载有哪些区别"></a>四、软负载与硬负载有哪些区别</h3><ul>
+<li>‌<strong>硬负载</strong>‌：基于专用物理设备（如F5 BIG-IP、A10 Networks），独立于操作系统运行，直接处理网络流量，不消耗服务器资源。‌</li>
+<li>‌<strong>软负载</strong>‌：通过软件（如Nginx、HAProxy）部署在普通服务器或虚拟机上，依赖宿主机操作系统和硬件性能。‌</li>
+</ul>
+<p>性能与稳定性</p>
+<ol>
+<li>‌<strong>硬负载</strong>‌<ul>
+<li>高性能：专用ASIC芯片加速处理，支持高并发（如百万级请求），延迟低。‌</li>
+<li>高稳定性：硬件级故障隔离，适合金融、政务等关键业务。‌‌</li>
+</ul>
+</li>
+<li>‌<strong>软负载</strong>‌<ul>
+<li>性能受限：受服务器CPU&#x2F;内存约束，大规模流量（如并发&gt;1万）易成瓶颈。‌‌</li>
+<li>稳定性一般：需额外配置冗余（如Keepalived）防单点故障。‌‌</li>
+</ul>
+</li>
+</ol>
+<p>成本与扩展性</p>
+<ol>
+<li>‌<strong>硬负载</strong>‌<ul>
+<li>成本高：设备采购价20万–100万元，维护需专业团队。‌‌</li>
+<li>扩展性差：新增流量需追加硬件节点，灵活性低。‌‌</li>
+</ul>
+</li>
+<li>‌<strong>软负载</strong>‌<ul>
+<li>成本低：开源软件免费，仅需服务器资源。‌‌</li>
+<li>扩展性好：支持云环境动态扩缩容（如Kubernetes），快速响应流量变化。‌‌</li>
+</ul>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img01.656886.xyz/%E5%92%95%E5%92%95.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img01.656886.xyz/%E5%92%95%E5%92%95.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">Fa</div><div class="post-copyright__author_desc">| 发现未知,学习内容</div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://blog.656886.xyz/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%92%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://blog.656886.xyz/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%92%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/')">Nginx负载均衡和反向代理</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://blog.656886.xyz/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%92%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=Nginx负载均衡和反向代理&amp;url=http://blog.656886.xyz/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%92%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/&amp;pic=" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://blog.656886.xyz" target="_blank">F Blog</a>！</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/Nginx/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>Nginx<span class="tagsPageCount">3</span></a><a class="post-meta__box__tags" href="/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>负载均衡<span class="tagsPageCount">1</span></a><a class="post-meta__box__tags" href="/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>反向代理<span class="tagsPageCount">1</span></a><a class="post-meta__box__tags" href="/tags/%E9%9B%86%E7%BE%A4/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>集群<span class="tagsPageCount">1</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="https://img01.656886.xyz/%E5%92%95%E5%92%95.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E6%9C%8D%E5%8A%A1%E5%99%A8/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Nginx实现静态资源服务器</div></div></a></div><div class="next-post pull-right"><a href="/%E8%BF%90%E7%BB%B4/Centos7%20%E5%AE%89%E8%A3%85Zabbix/"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Centos7 安装Zabbix</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>喜欢这篇文章的人也看了</span></div><div class="relatedPosts-list"><div><a href="/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E5%87%8F%E5%B0%91%E5%B8%A6%E5%AE%BD%E8%B5%84%E6%BA%90/" title="Nginx减少带宽资源"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-05-29</div><div class="title">Nginx减少带宽资源</div></div></a></div><div><a href="/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="Nginx实现静态资源服务器"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2026-05-29</div><div class="title">Nginx实现静态资源服务器</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img01.656886.xyz/%E5%92%95%E5%92%95.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-status"><img class="g-status" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2023/08/24/64e6ce9c507bb.png" alt="status"/></div></div><div class="author-info__description">欢迎来到我的博客！这里是我解决学习中各种小难题与需求的记录空间。<br>感谢你的到访，希望你在这里能找到你需要的知识和教程。</div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Fa</h1><div class="author-info__desc">| 发现未知,学习内容</div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/Fa277322" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://t.me/ikunkunkun666" target="_blank" title="Telegram"><i class="anzhiyufont anzhiyu-icon-paper-plane"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>文章目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E5%92%8C%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="toc-number">1.</span> <span class="toc-text">Nginx反向代理和负载均衡</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81Nginx%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E4%B8%8E%E5%8C%BA%E5%88%AB"><span class="toc-number">1.0.1.</span> <span class="toc-text">一、Nginx的应用场景与区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E9%85%8D%E7%BD%AE"><span class="toc-number">1.0.2.</span> <span class="toc-text">二、Nginx反向代理配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%92%8C%E7%AD%96%E7%95%A5"><span class="toc-number">1.0.3.</span> <span class="toc-text">三、Nginx负载均衡和策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9F"><span class="toc-number">1.0.4.</span> <span class="toc-text">什么是负载均衡？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8ENginx%E5%AE%9E%E7%8E%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E2%80%94%E2%80%94%E5%85%AD%E7%A7%8D%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AD%96%E7%95%A5"><span class="toc-number">1.0.5.</span> <span class="toc-text">基于Nginx实现负载均衡——六种负载均衡策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%BD%AF%E8%B4%9F%E8%BD%BD%E4%B8%8E%E7%A1%AC%E8%B4%9F%E8%BD%BD%E6%9C%89%E5%93%AA%E4%BA%9B%E5%8C%BA%E5%88%AB"><span class="toc-number">1.0.6.</span> <span class="toc-text">四、软负载与硬负载有哪些区别</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>最近发布</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E5%87%8F%E5%B0%91%E5%B8%A6%E5%AE%BD%E8%B5%84%E6%BA%90/" title="Nginx减少带宽资源">Nginx减少带宽资源</a><time datetime="2026-05-29T14:50:40.000Z" title="发表于 2026-05-29 22:50:40">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E8%BF%90%E7%BB%B4/Centos7%20%E5%AE%89%E8%A3%85Zabbix/" title="Centos7 安装Zabbix">Centos7 安装Zabbix</a><time datetime="2026-05-29T14:50:40.000Z" title="发表于 2026-05-29 22:50:40">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%92%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" title="Nginx负载均衡和反向代理">Nginx负载均衡和反向代理</a><time datetime="2026-05-29T14:50:40.000Z" title="发表于 2026-05-29 22:50:40">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E8%BF%90%E7%BB%B4/Nginx/Nginx%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="Nginx实现静态资源服务器">Nginx实现静态资源服务器</a><time datetime="2026-05-29T14:50:40.000Z" title="发表于 2026-05-29 22:50:40">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E8%BF%90%E7%BB%B4/%E7%9B%91%E6%8E%A7/Prometheus+Grafana/" title="Prometheus+Grafana监控部署">Prometheus+Grafana监控部署</a><time datetime="2026-05-29T14:50:40.000Z" title="发表于 2026-05-29 22:50:40">2026-05-29</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title="博客框架为Hexo_v5.4.0"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img01.656886.xyz/hexo-svgrepo-com.svg" alt="博客框架为Hexo_v5.4.0"/></a><a class="github-badge" target="_blank" href="https://blog.anheyu.com/" style="margin-inline:5px" data-title="本站使用AnZhiYu主题" title="本站使用AnZhiYu主题"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img01.656886.xyz/rainbow-svgrepo-com.svg" alt="本站使用AnZhiYu主题"/></a><a class="github-badge" target="_blank" href="https://www.cloudflare.com/" style="margin-inline:5px" data-title="本站使用cloudflare为静态资源提供CDN加速" title="本站使用cloudflare为静态资源提供CDN加速"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img01.656886.xyz/cloudflare-svg.svg" alt="本站使用cloudflare为静态资源提供CDN加速"/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title="本站项目由Github托管"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img01.656886.xyz/github-142-svgrepo-com.svg" alt="本站项目由Github托管"/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img01.656886.xyz/creativecommons-svgrepo-com.svg" alt="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可"/></a></p></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2024 - 2026 By <a class="footer-bar-link" href="/" title="Fa" target="_blank">Fa</a></div></div><div id="footer-type-tips"></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">文章</div><div class="length-num">16</div></a><a href="/tags/" title="tag"><div class="headline">标签</div><div class="length-num">30</div></a><a href="/categories/" title="category"><div class="headline">分类</div><div class="length-num">11</div></a></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="显示模式"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>显示模式</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">网页</div><div class="back-menu-list"><a class="back-menu-item" href="https://blog.656886.xyz/" title="博客"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img01.656886.xyz/%E5%92%95%E5%92%95.jpg" alt="博客"/><span class="back-menu-item-text">博客</span></a></div></div><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://picgo.github.io/PicGo-Doc/" title="PicGo图床"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://img01.656886.xyz/PicGo-LOGO.svg" alt="PicGo图床"/><span class="back-menu-item-text">PicGo图床</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 教程TUTORIAL</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 全部文章</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 文章分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 推荐REC</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/categories/%E6%90%AD%E5%BB%BA%E7%B1%BB/"><span> 搭建类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/%E6%95%99%E7%A8%8B%E7%B1%BB/"><span> 教程类</span></a></li><li><a class="site-page child faa-parent animated-hover" target="_blank" rel="noopener" href="https://ssh.cmliussss.net/"><span> WebSSH</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 公益服务CSR</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" target="_blank" rel="noopener" href="https://github.fxxk.dedyn.io/"><i class="anzhiyufont anzhiyu-icon-github faa-tada" style="font-size: 0.9em;"></i><span> GitHub 文件加速</span></a></li><li><a class="site-page child faa-parent animated-hover" target="_blank" rel="noopener" href="https://ssh.cmliussss.net/"><i class="anzhiyufont anzhiyu-icon-keyboard faa-tada" style="font-size: 0.9em;"></i><span> WebSSH</span></a></li><li><a class="site-page child faa-parent animated-hover" target="_blank" rel="noopener" href="https://sub.fxxk.dedyn.io/"><i class="anzhiyufont anzhiyu-icon-shuffle faa-tada" style="font-size: 0.9em;"></i><span> 订阅转换</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于F</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-house-chimney faa-tada" style="font-size: 0.9em;"></i><span> About me</span></a></li><li><a class="site-page child faa-parent animated-hover" target="_blank" rel="noopener" href="https://github.com/Fa277322?tab=repositories"><i class="anzhiyufont anzhiyu-icon-github faa-tada" style="font-size: 0.9em;"></i><span> GitHub仓库</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/CDN/" style="font-size: 0.88rem;">CDN<sup>1</sup></a><a href="/tags/CentOS/" style="font-size: 0.88rem;">CentOS<sup>1</sup></a><a href="/tags/Docker/" style="font-size: 0.88rem;">Docker<sup>1</sup></a><a href="/tags/Grafana/" style="font-size: 0.88rem;">Grafana<sup>1</sup></a><a href="/tags/Kafka/" style="font-size: 0.88rem;">Kafka<sup>1</sup></a><a href="/tags/Linux/" style="font-size: 0.88rem;">Linux<sup>2</sup></a><a href="/tags/Nginx/" style="font-size: 0.88rem;">Nginx<sup>3</sup></a><a href="/tags/Prometheus/" style="font-size: 0.88rem;">Prometheus<sup>1</sup></a><a href="/tags/Shell/" style="font-size: 0.88rem;">Shell<sup>1</sup></a><a href="/tags/Zabbix/" style="font-size: 0.88rem;">Zabbix<sup>1</sup></a><a href="/tags/%E4%B8%AD%E5%B0%8F%E4%BC%81%E4%B8%9A%E7%BD%91%E7%BB%9C%E6%9E%84%E5%BB%BA/" style="font-size: 0.88rem;">中小企业网络构建<sup>5</sup></a><a href="/tags/%E5%8A%A8%E9%9D%99%E5%88%86%E7%A6%BB/" style="font-size: 0.88rem;">动静分离<sup>1</sup></a><a href="/tags/%E5%8D%8E%E4%B8%BA%E4%BA%91/" style="font-size: 0.88rem;">华为云<sup>1</sup></a><a href="/tags/%E5%8E%8B%E7%BC%A9/" style="font-size: 0.88rem;">压缩<sup>1</sup></a><a href="/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" style="font-size: 0.88rem;">反向代理<sup>1</sup></a><a href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" style="font-size: 0.88rem;">可视化<sup>1</sup></a><a href="/tags/%E5%AE%B9%E5%99%A8/" style="font-size: 0.88rem;">容器<sup>1</sup></a><a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 0.88rem;">性能优化<sup>1</sup></a><a href="/tags/%E6%90%AD%E5%BB%BA%E7%B1%BB/" style="font-size: 0.88rem;">搭建类<sup>1</sup></a><a href="/tags/%E6%95%99%E7%A8%8B%E7%B1%BB/" style="font-size: 0.88rem;">教程类<sup>1</sup></a><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 0.88rem;">消息队列<sup>1</sup></a><a href="/tags/%E7%9B%91%E6%8E%A7/" style="font-size: 0.88rem;">监控<sup>2</sup></a><a href="/tags/%E7%AC%94%E8%AE%B0/" style="font-size: 0.88rem;">笔记<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 0.88rem;">缓存<sup>1</sup></a><a href="/tags/%E8%84%9A%E6%9C%AC/" style="font-size: 0.88rem;">脚本<sup>1</sup></a><a href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96%E6%8A%80%E6%9C%AF/" style="font-size: 0.88rem;">虚拟化技术<sup>1</sup></a><a href="/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" style="font-size: 0.88rem;">负载均衡<sup>1</sup></a><a href="/tags/%E9%9B%86%E7%BE%A4/" style="font-size: 0.88rem;">集群<sup>1</sup></a><a href="/tags/%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90/" style="font-size: 0.88rem;">静态资源<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 0.88rem;">面试题<sup>1</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8152976493" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random" volume="0.7"></meting-js></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="anzhiyufont anzhiyu-icon-xmark"></i></button></nav><div class="is-center" id="loading-database"><i class="anzhiyufont anzhiyu-icon-spinner anzhiyu-pulse-icon"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("30/11/2024 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2024 By 安知鱼 V1.6.14",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Fa 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
